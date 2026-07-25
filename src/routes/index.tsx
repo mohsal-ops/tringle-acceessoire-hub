@@ -60,7 +60,7 @@ function HomePage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("id,slug,name_ar,name_fr,price,original_price,has_variants,created_at,categories(name_ar,name_fr),product_images(url,sort_order),product_variants(price,original_price)")
+        .select("id,slug,name_ar,name_fr,sizes,price,original_price,has_variants,created_at,categories(name_ar,name_fr),product_images(url,sort_order),product_variants(label,price,original_price,sort_order)")
         .eq("is_active", true)
         .eq("is_featured", true)
         .order("sort_order")
