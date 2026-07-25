@@ -22,12 +22,12 @@ function EditProductPage() {
     <div className="p-6 lg:p-8 space-y-6 max-w-6xl">
       <div>
         <Link to="/admin/products" className="text-sm text-muted-foreground hover:underline inline-flex items-center gap-1">
-          <ChevronLeft className="h-4 w-4" /> Back to products
+          <ChevronLeft className="h-4 w-4 rtl:rotate-180" /> العودة إلى المنتجات
         </Link>
-        <h1 className="text-2xl font-semibold mt-2">Edit product</h1>
+        <h1 className="text-2xl font-semibold mt-2">تعديل المنتج</h1>
       </div>
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">Loading…</p>
+        <p className="text-sm text-muted-foreground">جارٍ التحميل…</p>
       ) : error ? (
         <p className="text-sm text-destructive">{(error as Error).message}</p>
       ) : data?.product ? (

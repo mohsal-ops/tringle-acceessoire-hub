@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Sign in — Tringle Accessoires Admin" }] }),
+  head: () => ({ meta: [{ title: "تسجيل الدخول — لوحة تحكم ترينقل أكسسوار" }, { name: "robots", content: "noindex" }] }),
   component: AuthPage,
 });
 
@@ -24,22 +24,22 @@ function AuthPage() {
   }, [navigate]);
 
   return (
-    <div dir="ltr" className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-12">
+    <div dir="rtl" className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-center">Tringle Accessoires — Admin</CardTitle>
+          <CardTitle className="text-center">ترينقل أكسسوار — لوحة التحكم</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid grid-cols-2 w-full">
-              <TabsTrigger value="login">Sign in</TabsTrigger>
-              <TabsTrigger value="signup">Sign up</TabsTrigger>
+              <TabsTrigger value="login">تسجيل الدخول</TabsTrigger>
+              <TabsTrigger value="signup">إنشاء حساب</TabsTrigger>
             </TabsList>
             <TabsContent value="login"><LoginForm /></TabsContent>
             <TabsContent value="signup"><SignupForm /></TabsContent>
           </Tabs>
           <p className="mt-4 text-center text-sm">
-            <Link to="/" className="text-muted-foreground hover:underline">← Back to site</Link>
+            <Link to="/" className="text-muted-foreground hover:underline">← العودة إلى الموقع</Link>
           </p>
         </CardContent>
       </Card>
@@ -59,34 +59,34 @@ function LoginForm() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Signed in");
+    toast.success("تم تسجيل الدخول");
     navigate({ to: "/admin" });
   }
 
   async function onForgot() {
-    if (!email) return toast.error("Enter your email first");
+    if (!email) return toast.error("أدخل بريدك الإلكتروني أولاً");
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
     if (error) return toast.error(error.message);
-    toast.success("Password reset email sent");
+    toast.success("تم إرسال بريد إعادة تعيين كلمة المرور");
   }
 
   return (
     <form onSubmit={onSubmit} className="space-y-4 mt-4">
       <div>
-        <Label htmlFor="email">Email</Label>
-        <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Label htmlFor="email">البريد الإلكتروني</Label>
+        <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} dir="ltr" />
       </div>
       <div>
-        <Label htmlFor="pwd">Password</Label>
-        <Input id="pwd" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Label htmlFor="pwd">كلمة المرور</Label>
+        <Input id="pwd" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} dir="ltr" />
       </div>
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Signing in…" : "Sign in"}
+        {loading ? "جارٍ تسجيل الدخول…" : "تسجيل الدخول"}
       </Button>
       <button type="button" onClick={onForgot} className="block w-full text-center text-sm text-muted-foreground hover:underline">
-        Forgot password?
+        هل نسيت كلمة المرور؟
       </button>
     </form>
   );
@@ -107,21 +107,21 @@ function SignupForm() {
     });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Check your email to confirm your account.");
+    toast.success("تفقّد بريدك الإلكتروني لتأكيد حسابك.");
   }
 
   return (
     <form onSubmit={onSubmit} className="space-y-4 mt-4">
       <div>
-        <Label htmlFor="su-email">Email</Label>
-        <Input id="su-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Label htmlFor="su-email">البريد الإلكتروني</Label>
+        <Input id="su-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} dir="ltr" />
       </div>
       <div>
-        <Label htmlFor="su-pwd">Password</Label>
-        <Input id="su-pwd" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Label htmlFor="su-pwd">كلمة المرور</Label>
+        <Input id="su-pwd" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} dir="ltr" />
       </div>
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Creating account…" : "Sign up"}
+        {loading ? "جارٍ إنشاء الحساب…" : "إنشاء حساب"}
       </Button>
     </form>
   );

@@ -111,7 +111,7 @@ export function ProductForm({ initial }: Props) {
       }
       setImages(next);
     } catch (e: any) {
-      toast.error(e.message || "Upload failed");
+      toast.error(e.message || "فشل رفع الصورة");
     } finally {
       setUploading(false);
     }
@@ -177,7 +177,7 @@ export function ProductForm({ initial }: Props) {
       });
     },
     onSuccess: () => {
-      toast.success(initial?.id ? "Product updated" : "Product created");
+      toast.success(initial?.id ? "تم تحديث المنتج" : "تم إنشاء المنتج");
       qc.invalidateQueries({ queryKey: ["admin-products"] });
       navigate({ to: "/admin/products" });
     },
@@ -191,30 +191,30 @@ export function ProductForm({ initial }: Props) {
     >
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">
-          <CardHeader><CardTitle className="text-base">Details</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">التفاصيل</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label>Name (Français) *</Label>
-                <Input value={nameFr} onChange={(e) => setNameFr(e.target.value)} required maxLength={200} />
+                <Label>الاسم (بالفرنسية) *</Label>
+                <Input value={nameFr} onChange={(e) => setNameFr(e.target.value)} required maxLength={200} dir="ltr" />
               </div>
               <div className="space-y-1.5">
-                <Label>Name (العربية) *</Label>
+                <Label>الاسم (بالعربية) *</Label>
                 <Input value={nameAr} onChange={(e) => setNameAr(e.target.value)} required maxLength={200} dir="rtl" />
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label>Slug *</Label>
-              <Input value={slug} onChange={(e) => { setSlugTouched(true); setSlug(e.target.value); }} required pattern="[a-z0-9-]+" />
-              <p className="text-xs text-muted-foreground">Used in the URL. Lowercase letters, numbers and dashes only.</p>
+              <Label>الرابط (Slug) *</Label>
+              <Input value={slug} onChange={(e) => { setSlugTouched(true); setSlug(e.target.value); }} required pattern="[a-z0-9-]+" dir="ltr" />
+              <p className="text-xs text-muted-foreground">يُستخدم في رابط الصفحة. أحرف إنجليزية صغيرة وأرقام وشرطات فقط.</p>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label>Description (Français)</Label>
-                <Textarea rows={4} value={descFr} onChange={(e) => setDescFr(e.target.value)} maxLength={5000} />
+                <Label>الوصف (بالفرنسية)</Label>
+                <Textarea rows={4} value={descFr} onChange={(e) => setDescFr(e.target.value)} maxLength={5000} dir="ltr" />
               </div>
               <div className="space-y-1.5">
-                <Label>Description (العربية)</Label>
+                <Label>الوصف (بالعربية)</Label>
                 <Textarea rows={4} value={descAr} onChange={(e) => setDescAr(e.target.value)} maxLength={5000} dir="rtl" />
               </div>
             </div>
@@ -222,14 +222,14 @@ export function ProductForm({ initial }: Props) {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="text-base">Settings</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">الإعدادات</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="rounded-md border p-3 space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="has-variants" className="flex flex-col">
-                  <span>{hasVariants ? "منتج بمقاسات/خيارات" : "منتج بسيط"}</span>
+                  <span>{hasVariants ? "تفعيل المقاسات" : "منتج بسيط"}</span>
                   <span className="text-xs text-muted-foreground font-normal">
-                    {hasVariants ? "Multiple options with their own prices" : "Single fixed price"}
+                    {hasVariants ? "خيارات متعددة لكل منها سعره الخاص" : "سعر واحد ثابت"}
                   </span>
                 </Label>
                 <Switch id="has-variants" checked={hasVariants} onCheckedChange={setHasVariants} />
@@ -239,54 +239,55 @@ export function ProductForm({ initial }: Props) {
             {!hasVariants && (
               <>
                 <div className="space-y-1.5">
-                  <Label>Price (DA) *</Label>
+                  <Label>السعر (دج) *</Label>
                   <Input type="number" min="0" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} required />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Original price (DA) <span className="text-xs text-muted-foreground">— optional, shows strikethrough & sale badge</span></Label>
-                  <Input type="number" min="0" step="0.01" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} placeholder="Leave empty for no discount" />
+                  <Label>السعر الأصلي (دج) <span className="text-xs text-muted-foreground">— اختياري، يُظهر السعر مشطوباً وشارة التخفيض</span></Label>
+                  <Input type="number" min="0" step="0.01" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} placeholder="اتركه فارغاً إن لم يكن هناك تخفيض" />
                 </div>
               </>
             )}
 
             <div className="space-y-1.5">
-              <Label>Category</Label>
+              <Label>الفئة</Label>
               <Select value={categoryId || "none"} onValueChange={(v) => setCategoryId(v === "none" ? "" : v)}>
-                <SelectTrigger><SelectValue placeholder="None" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="بدون" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">— None —</SelectItem>
+                  <SelectItem value="none">— بدون —</SelectItem>
                   {catData?.categories.map((c: any) => (
-                    <SelectItem key={c.id} value={c.id}>{c.name_fr}</SelectItem>
+                    <SelectItem key={c.id} value={c.id}>{c.name_ar || c.name_fr}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label>Sort order</Label>
+              <Label>ترتيب العرض</Label>
               <Input type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} />
             </div>
             {!hasVariants && (
               <div className="space-y-1.5">
-                <Label>Legacy sizes (quick buttons)</Label>
+                <Label>مقاسات سريعة (أزرار)</Label>
                 <Input
                   value={sizesText}
                   onChange={(e) => setSizesText(e.target.value)}
-                  placeholder="1m, 1.50m, 2m…"
+                  placeholder="1m، 1.50m، 2m…"
+                  dir="ltr"
                 />
-                <p className="text-xs text-muted-foreground">Comma-separated. Prefer using Variants for per-size pricing.</p>
+                <p className="text-xs text-muted-foreground">افصل بينها بفاصلة. يُفضّل استخدام «المقاسات» لتحديد سعر لكل مقاس.</p>
               </div>
             )}
             <div className="flex items-center justify-between pt-2">
               <Label htmlFor="active" className="flex flex-col">
-                <span>Active</span>
-                <span className="text-xs text-muted-foreground font-normal">Visible on storefront</span>
+                <span>مُفعّل</span>
+                <span className="text-xs text-muted-foreground font-normal">ظاهر في المتجر</span>
               </Label>
               <Switch id="active" checked={isActive} onCheckedChange={setIsActive} />
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="featured" className="flex flex-col">
-                <span>Featured</span>
-                <span className="text-xs text-muted-foreground font-normal">Highlight on home</span>
+                <span>مميّز</span>
+                <span className="text-xs text-muted-foreground font-normal">إبراز في الصفحة الرئيسية</span>
               </Label>
               <Switch id="featured" checked={isFeatured} onCheckedChange={setIsFeatured} />
             </div>
@@ -297,23 +298,23 @@ export function ProductForm({ initial }: Props) {
       {hasVariants && (
         <Card>
           <CardHeader className="flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-base">Variants / Options</CardTitle>
+            <CardTitle className="text-base">المقاسات / الخيارات</CardTitle>
             <Button type="button" size="sm" variant="outline" onClick={addVariant}>
-              <Plus className="h-4 w-4 me-1" /> Add variant
+              <Plus className="h-4 w-4 me-1" /> إضافة مقاس
             </Button>
           </CardHeader>
           <CardContent className="space-y-3">
             {variants.length === 0 && (
               <p className="text-sm text-muted-foreground">
-                No variants yet. Click "Add variant" to create one (e.g. 1m, 1.5m, 6m, 50M, "Set of 3"…).
+                لا توجد مقاسات بعد. اضغط «إضافة مقاس» لإنشاء واحد (مثال: 1m، 1.5m، 6m، 50M، «طقم من 3»…).
               </p>
             )}
             {variants.length > 0 && (
               <div className="hidden md:grid grid-cols-[1fr_140px_140px_100px_auto] gap-2 text-xs font-medium text-muted-foreground px-2">
-                <div>Label</div>
-                <div>Price (DA) *</div>
-                <div>Original price</div>
-                <div>Stock</div>
+                <div>المقاس / الخيار</div>
+                <div>السعر (دج) *</div>
+                <div>السعر الأصلي</div>
+                <div>المخزون</div>
                 <div></div>
               </div>
             )}
@@ -322,21 +323,21 @@ export function ProductForm({ initial }: Props) {
                 <Input
                   value={v.label}
                   onChange={(e) => updateVariant(i, { label: e.target.value })}
-                  placeholder="e.g. 1.50m, 6m, Set of 3…"
+                  placeholder="مثال: 1.50m، 6m، طقم من 3…"
                   required
                 />
                 <Input
                   type="number" min="0" step="0.01"
                   value={v.price}
                   onChange={(e) => updateVariant(i, { price: e.target.value })}
-                  placeholder="Price"
+                  placeholder="السعر"
                   required
                 />
                 <Input
                   type="number" min="0" step="0.01"
                   value={v.original_price}
                   onChange={(e) => updateVariant(i, { original_price: e.target.value })}
-                  placeholder="Optional"
+                  placeholder="اختياري"
                 />
                 <Input
                   type="number" min="0" step="1"
@@ -362,12 +363,12 @@ export function ProductForm({ initial }: Props) {
       )}
 
       <Card>
-        <CardHeader><CardTitle className="text-base">Images</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-base">الصور</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <label className="flex items-center justify-center gap-2 border-2 border-dashed rounded-md px-4 py-8 cursor-pointer hover:bg-muted/50 transition">
             <Upload className="h-5 w-5 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">
-              {uploading ? "Uploading…" : "Click to upload images (you can pick multiple)"}
+              {uploading ? "جارٍ الرفع…" : "اضغط لرفع الصور (يمكنك اختيار عدة صور)"}
             </span>
             <input
               type="file" accept="image/*" multiple className="hidden"
@@ -400,9 +401,9 @@ export function ProductForm({ initial }: Props) {
       </Card>
 
       <div className="flex gap-2 justify-end">
-        <Button type="button" variant="outline" onClick={() => navigate({ to: "/admin/products" })}>Cancel</Button>
+        <Button type="button" variant="outline" onClick={() => navigate({ to: "/admin/products" })}>إلغاء</Button>
         <Button type="submit" disabled={mut.isPending || uploading}>
-          {mut.isPending ? "Saving…" : initial?.id ? "Save changes" : "Create product"}
+          {mut.isPending ? "جارٍ الحفظ…" : initial?.id ? "حفظ التغييرات" : "إنشاء المنتج"}
         </Button>
       </div>
     </form>

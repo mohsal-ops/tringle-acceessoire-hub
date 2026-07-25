@@ -15,17 +15,17 @@ function DashboardPage() {
   const { data, isLoading } = useQuery({ queryKey: ["admin-stats"], queryFn: () => fn() });
 
   const cards = [
-    { label: "Pending orders", value: data?.pendingOrders, icon: Clock, to: "/admin/orders?status=pending" },
-    { label: "Orders today", value: data?.todayOrders, icon: ShoppingBag, to: "/admin/orders" },
-    { label: "Pending appointments", value: data?.pendingAppointments, icon: CalendarClock, to: "/admin/appointments?status=pending" },
-    { label: "Upcoming visits", value: data?.upcomingAppointments, icon: CalendarDays, to: "/admin/appointments?status=confirmed" },
+    { label: "طلبات قيد الانتظار", value: data?.pendingOrders, icon: Clock, to: "/admin/orders?status=pending" },
+    { label: "طلبات اليوم", value: data?.todayOrders, icon: ShoppingBag, to: "/admin/orders" },
+    { label: "مواعيد قيد الانتظار", value: data?.pendingAppointments, icon: CalendarClock, to: "/admin/appointments?status=pending" },
+    { label: "زيارات قادمة", value: data?.upcomingAppointments, icon: CalendarDays, to: "/admin/appointments?status=confirmed" },
   ];
 
   return (
     <div className="p-6 lg:p-8 space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Overview of orders and home visits.</p>
+        <h1 className="text-2xl font-semibold">لوحة التحكم</h1>
+        <p className="text-sm text-muted-foreground">نظرة عامة على الطلبات والزيارات المنزلية.</p>
       </header>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => {
@@ -46,10 +46,10 @@ function DashboardPage() {
         })}
       </div>
       <Card>
-        <CardHeader><CardTitle>Quick links</CardTitle></CardHeader>
+        <CardHeader><CardTitle>روابط سريعة</CardTitle></CardHeader>
         <CardContent className="flex flex-wrap gap-3 text-sm">
-          <Link to="/admin/orders" className="text-primary hover:underline">Manage orders →</Link>
-          <Link to="/admin/appointments" className="text-primary hover:underline">Manage appointments →</Link>
+          <Link to="/admin/orders" className="text-primary hover:underline">إدارة الطلبات ←</Link>
+          <Link to="/admin/appointments" className="text-primary hover:underline">إدارة المواعيد ←</Link>
         </CardContent>
       </Card>
     </div>

@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { appointmentStatusLabel } from "@/lib/admin-i18n";
 
 export const Route = createFileRoute("/_authenticated/admin/appointments/$id")({
   ssr: false,
@@ -57,44 +58,44 @@ function AppointmentDetailPage() {
         },
       }),
     onSuccess: () => {
-      toast.success("Saved");
+      toast.success("تم الحفظ");
       qc.invalidateQueries({ queryKey: ["admin-appt", id] });
       qc.invalidateQueries({ queryKey: ["admin-appts"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (isLoading) return <div className="p-8 text-muted-foreground">Loading…</div>;
-  if (!data?.appointment) return <div className="p-8">Not found.</div>;
+  if (isLoading) return <div className="p-8 text-muted-foreground">جارٍ التحميل…</div>;
+  if (!data?.appointment) return <div className="p-8">غير موجود.</div>;
   const a: any = data.appointment;
 
   return (
     <div className="p-6 lg:p-8 space-y-6 max-w-4xl">
       <Link to="/admin/appointments" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="h-4 w-4" /> Back to appointments
+        <ArrowLeft className="h-4 w-4 rtl:rotate-180" /> العودة إلى المواعيد
       </Link>
 
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold font-mono">{a.appointment_number}</h1>
-          <p className="text-sm text-muted-foreground">Created {new Date(a.created_at).toLocaleString()}</p>
+          <p className="text-sm text-muted-foreground">أُنشئ في {new Date(a.created_at).toLocaleString()}</p>
         </div>
-        <Badge variant="secondary" className="capitalize">{a.status}</Badge>
+        <Badge variant="secondary">{appointmentStatusLabel(a.status)}</Badge>
       </header>
 
       <Card>
-        <CardHeader><CardTitle>Customer & request</CardTitle></CardHeader>
+        <CardHeader><CardTitle>الزبون والطلب</CardTitle></CardHeader>
         <CardContent className="grid gap-2 text-sm sm:grid-cols-2">
-          <Row label="Name" value={a.customer_name} />
-          <Row label="Phone" value={a.customer_phone} mono />
-          {a.customer_email && <Row label="Email" value={a.customer_email} />}
-          <Row label="Windows" value={String(a.window_count)} />
-          <Row label="Preferred date" value={a.preferred_date} />
-          {a.wilaya?.name_fr && <Row label="Wilaya" value={a.wilaya.name_fr} />}
-          {a.city?.name_fr && <Row label="City" value={a.city.name_fr} />}
+          <Row label="الاسم" value={a.customer_name} />
+          <Row label="الهاتف" value={a.customer_phone} mono />
+          {a.customer_email && <Row label="البريد الإلكتروني" value={a.customer_email} />}
+          <Row label="عدد النوافذ" value={String(a.window_count)} />
+          <Row label="التاريخ المفضل" value={a.preferred_date} />
+          {a.wilaya?.name_fr && <Row label="الولاية" value={a.wilaya.name_fr} />}
+          {a.city?.name_fr && <Row label="البلدية" value={a.city.name_fr} />}
           {a.description && (
             <div className="sm:col-span-2">
-              <div className="text-muted-foreground mb-1">Description</div>
+              <div className="text-muted-foreground mb-1">الوصف</div>
               <div className="rounded border bg-muted/30 p-3 whitespace-pre-wrap">{a.description}</div>
             </div>
           )}
@@ -102,33 +103,33 @@ function AppointmentDetailPage() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Manage</CardTitle></CardHeader>
+        <CardHeader><CardTitle>إدارة</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-3">
             <div>
-              <Label>Status</Label>
+              <Label>الحالة</Label>
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                  {STATUSES.map((s) => <SelectItem key={s} value={s}>{appointmentStatusLabel(s)}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <Label>Confirmed date</Label>
+              <Label>التاريخ المؤكد</Label>
               <Input type="date" value={confirmedDate} onChange={(e) => setConfirmedDate(e.target.value)} />
             </div>
             <div>
-              <Label>Travel cost (DA)</Label>
+              <Label>تكلفة التنقل (دج)</Label>
               <Input type="number" min="0" value={travelCost} onChange={(e) => setTravelCost(e.target.value)} />
             </div>
           </div>
           <div>
-            <Label>Internal notes</Label>
+            <Label>ملاحظات داخلية</Label>
             <Textarea rows={4} value={notes} onChange={(e) => setNotes(e.target.value)} />
           </div>
           <Button onClick={() => mut.mutate()} disabled={mut.isPending}>
-            {mut.isPending ? "Saving…" : "Save changes"}
+            {mut.isPending ? "جارٍ الحفظ…" : "حفظ التغييرات"}
           </Button>
         </CardContent>
       </Card>

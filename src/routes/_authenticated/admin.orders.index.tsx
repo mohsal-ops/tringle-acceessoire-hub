@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { orderStatusLabel, deliveryTypeLabel } from "@/lib/admin-i18n";
 
 const ORDER_STATUSES = ["all", "pending", "confirmed", "in_delivery", "delivered", "cancelled"] as const;
 
@@ -40,16 +41,16 @@ function OrdersListPage() {
   return (
     <div className="p-6 lg:p-8 space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Orders</h1>
-        <p className="text-sm text-muted-foreground">{data?.orders.length ?? 0} results</p>
+        <h1 className="text-2xl font-semibold">الطلبات</h1>
+        <p className="text-sm text-muted-foreground">{data?.orders.length ?? 0} نتيجة</p>
       </header>
 
       <Card>
         <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <CardTitle className="text-base">Filter</CardTitle>
+          <CardTitle className="text-base">تصفية</CardTitle>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <Input
-              placeholder="Search number, name, phone…"
+              placeholder="ابحث برقم الطلب أو الاسم أو الهاتف…"
               defaultValue={search.q}
               className="sm:w-64"
               onKeyDown={(e) => {
@@ -65,7 +66,7 @@ function OrdersListPage() {
               <SelectTrigger className="sm:w-48"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {ORDER_STATUSES.map((s) => (
-                  <SelectItem key={s} value={s}>{s === "all" ? "All statuses" : s.replace("_", " ")}</SelectItem>
+                  <SelectItem key={s} value={s}>{orderStatusLabel(s)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -75,21 +76,21 @@ function OrdersListPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Number</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead>Delivery</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead>رقم الطلب</TableHead>
+                <TableHead>الزبون</TableHead>
+                <TableHead>الهاتف</TableHead>
+                <TableHead>المجموع</TableHead>
+                <TableHead>التوصيل</TableHead>
+                <TableHead>الحالة</TableHead>
+                <TableHead>التاريخ</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading && (
-                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">Loading…</TableCell></TableRow>
+                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">جارٍ التحميل…</TableCell></TableRow>
               )}
               {!isLoading && (data?.orders.length ?? 0) === 0 && (
-                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">No orders.</TableCell></TableRow>
+                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">لا توجد طلبات.</TableCell></TableRow>
               )}
               {data?.orders.map((o: any) => (
                 <TableRow key={o.id} className="cursor-pointer hover:bg-muted/50">
@@ -100,10 +101,10 @@ function OrdersListPage() {
                   </TableCell>
                   <TableCell>{o.customer_name}</TableCell>
                   <TableCell className="font-mono text-xs">{o.customer_phone}</TableCell>
-                  <TableCell>{Number(o.total_price).toLocaleString()} DA</TableCell>
-                  <TableCell className="capitalize">{o.delivery_type}</TableCell>
+                  <TableCell>{Number(o.total_price).toLocaleString()} دج</TableCell>
+                  <TableCell>{deliveryTypeLabel(o.delivery_type)}</TableCell>
                   <TableCell>
-                    <Badge className={statusColor[o.status] || ""} variant="secondary">{o.status.replace("_", " ")}</Badge>
+                    <Badge className={statusColor[o.status] || ""} variant="secondary">{orderStatusLabel(o.status)}</Badge>
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">{new Date(o.created_at).toLocaleString()}</TableCell>
                 </TableRow>

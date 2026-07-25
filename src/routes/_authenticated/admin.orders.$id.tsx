@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { orderStatusLabel, deliveryTypeLabel } from "@/lib/admin-i18n";
 
 export const Route = createFileRoute("/_authenticated/admin/orders/$id")({
   ssr: false,
@@ -45,7 +46,7 @@ function OrderDetailPage() {
   const statusMut = useMutation({
     mutationFn: () => updateStatus({ data: { id, status: status as any, note: statusNote || undefined } }),
     onSuccess: () => {
-      toast.success("Status updated");
+      toast.success("تم تحديث الحالة");
       setStatusNote("");
       qc.invalidateQueries({ queryKey: ["admin-order", id] });
       qc.invalidateQueries({ queryKey: ["admin-orders"] });
@@ -56,103 +57,103 @@ function OrderDetailPage() {
   const notesMut = useMutation({
     mutationFn: () => updateNotes({ data: { id, admin_notes: adminNotes } }),
     onSuccess: () => {
-      toast.success("Notes saved");
+      toast.success("تم حفظ الملاحظات");
       qc.invalidateQueries({ queryKey: ["admin-order", id] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (isLoading) return <div className="p-8 text-muted-foreground">Loading…</div>;
-  if (!data?.order) return <div className="p-8">Not found.</div>;
+  if (isLoading) return <div className="p-8 text-muted-foreground">جارٍ التحميل…</div>;
+  if (!data?.order) return <div className="p-8">غير موجود.</div>;
   const o: any = data.order;
   const snap = o.product_snapshot ?? {};
 
   return (
     <div className="p-6 lg:p-8 space-y-6 max-w-5xl">
       <Link to="/admin/orders" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="h-4 w-4" /> Back to orders
+        <ArrowLeft className="h-4 w-4 rtl:rotate-180" /> العودة إلى الطلبات
       </Link>
 
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold font-mono">{o.order_number}</h1>
-          <p className="text-sm text-muted-foreground">Created {new Date(o.created_at).toLocaleString()}</p>
+          <p className="text-sm text-muted-foreground">أُنشئ في {new Date(o.created_at).toLocaleString()}</p>
         </div>
-        <Badge variant="secondary" className="capitalize">{o.status.replace("_", " ")}</Badge>
+        <Badge variant="secondary">{orderStatusLabel(o.status)}</Badge>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardHeader><CardTitle>Customer</CardTitle></CardHeader>
+          <CardHeader><CardTitle>الزبون</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <Row label="Name" value={o.customer_name} />
-            <Row label="Phone" value={o.customer_phone} mono />
-            {o.customer_email && <Row label="Email" value={o.customer_email} />}
-            <Row label="Delivery" value={o.delivery_type} />
-            {o.wilaya?.name_fr && <Row label="Wilaya" value={o.wilaya.name_fr} />}
-            {o.city?.name_fr && <Row label="City" value={o.city.name_fr} />}
-            {o.address && <Row label="Address" value={o.address} />}
-            {o.notes && <Row label="Customer note" value={o.notes} />}
+            <Row label="الاسم" value={o.customer_name} />
+            <Row label="الهاتف" value={o.customer_phone} mono />
+            {o.customer_email && <Row label="البريد الإلكتروني" value={o.customer_email} />}
+            <Row label="التوصيل" value={deliveryTypeLabel(o.delivery_type)} />
+            {o.wilaya?.name_fr && <Row label="الولاية" value={o.wilaya.name_fr} />}
+            {o.city?.name_fr && <Row label="البلدية" value={o.city.name_fr} />}
+            {o.address && <Row label="العنوان" value={o.address} />}
+            {o.notes && <Row label="ملاحظة الزبون" value={o.notes} />}
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>Product</CardTitle></CardHeader>
+          <CardHeader><CardTitle>المنتج</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <Row label="Product" value={snap.name_fr || snap.name_ar || "—"} />
-            <Row label="Unit price" value={`${Number(o.unit_price).toLocaleString()} DA`} />
-            <Row label="Quantity" value={String(o.quantity)} />
-            <Row label="Total" value={`${Number(o.total_price).toLocaleString()} DA`} />
+            <Row label="المنتج" value={snap.name_ar || snap.name_fr || "—"} />
+            <Row label="سعر الوحدة" value={`${Number(o.unit_price).toLocaleString()} دج`} />
+            <Row label="الكمية" value={String(o.quantity)} />
+            <Row label="المجموع" value={`${Number(o.total_price).toLocaleString()} دج`} />
           </CardContent>
         </Card>
       </div>
 
       <Card>
-        <CardHeader><CardTitle>Update status</CardTitle></CardHeader>
+        <CardHeader><CardTitle>تحديث الحالة</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <div className="flex flex-col gap-3 sm:flex-row">
             <Select value={status} onValueChange={setStatus}>
               <SelectTrigger className="sm:w-56"><SelectValue /></SelectTrigger>
               <SelectContent>
-                {STATUSES.map((s) => <SelectItem key={s} value={s}>{s.replace("_", " ")}</SelectItem>)}
+                {STATUSES.map((s) => <SelectItem key={s} value={s}>{orderStatusLabel(s)}</SelectItem>)}
               </SelectContent>
             </Select>
             <Input
-              placeholder="Optional note for history"
+              placeholder="ملاحظة اختيارية للسجل"
               value={statusNote}
               onChange={(e) => setStatusNote(e.target.value)}
             />
             <Button onClick={() => statusMut.mutate()} disabled={statusMut.isPending || status === o.status}>
-              {statusMut.isPending ? "Saving…" : "Save status"}
+              {statusMut.isPending ? "جارٍ الحفظ…" : "حفظ الحالة"}
             </Button>
           </div>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Internal notes</CardTitle></CardHeader>
+        <CardHeader><CardTitle>ملاحظات داخلية</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <Textarea rows={4} value={adminNotes} onChange={(e) => setAdminNotes(e.target.value)} />
           <Button onClick={() => notesMut.mutate()} disabled={notesMut.isPending}>
-            {notesMut.isPending ? "Saving…" : "Save notes"}
+            {notesMut.isPending ? "جارٍ الحفظ…" : "حفظ الملاحظات"}
           </Button>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Status history</CardTitle></CardHeader>
+        <CardHeader><CardTitle>سجل الحالات</CardTitle></CardHeader>
         <CardContent>
           {data.history.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No history yet.</p>
+            <p className="text-sm text-muted-foreground">لا يوجد سجل بعد.</p>
           ) : (
             <ul className="space-y-3">
               {data.history.map((h: any) => (
-                <li key={h.id} className="flex gap-3 text-sm border-l-2 border-primary/40 pl-3">
+                <li key={h.id} className="flex gap-3 text-sm border-s-2 border-primary/40 ps-3">
                   <div className="flex-1">
                     <div>
-                      <span className="text-muted-foreground">{h.old_status ?? "new"}</span>
-                      {" → "}
-                      <span className="font-medium">{h.new_status}</span>
+                      <span className="text-muted-foreground">{h.old_status ? orderStatusLabel(h.old_status) : "جديد"}</span>
+                      {" ← "}
+                      <span className="font-medium">{orderStatusLabel(h.new_status)}</span>
                     </div>
                     {h.note && <div className="text-muted-foreground mt-1">{h.note}</div>}
                   </div>

@@ -8,15 +8,15 @@ import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Admin — Tringle Accessoires" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "لوحة التحكم — ترينقل أكسسوار" }, { name: "robots", content: "noindex" }] }),
   component: AdminLayout,
 });
 
 const NAV = [
-  { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { to: "/admin/orders", label: "Orders", icon: ShoppingBag },
-  { to: "/admin/appointments", label: "Appointments", icon: CalendarClock },
-  { to: "/admin/products", label: "Products", icon: Package },
+  { to: "/admin", label: "لوحة التحكم", icon: LayoutDashboard, exact: true },
+  { to: "/admin/orders", label: "الطلبات", icon: ShoppingBag },
+  { to: "/admin/appointments", label: "المواعيد", icon: CalendarClock },
+  { to: "/admin/products", label: "المنتجات", icon: Package },
 ];
 
 function AdminLayout() {
@@ -35,27 +35,27 @@ function AdminLayout() {
   }
 
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading…</div>;
+    return <div className="min-h-screen flex items-center justify-center text-muted-foreground">جارٍ التحميل…</div>;
   }
   if (error || !data?.isAdmin) {
     return (
-      <div dir="ltr" className="min-h-screen flex flex-col items-center justify-center gap-4 p-6 text-center">
-        <h1 className="text-2xl font-semibold">Access denied</h1>
-        <p className="text-muted-foreground max-w-md">You are signed in but don't have admin access to this dashboard.</p>
+      <div dir="rtl" className="min-h-screen flex flex-col items-center justify-center gap-4 p-6 text-center">
+        <h1 className="text-2xl font-semibold">تم رفض الوصول</h1>
+        <p className="text-muted-foreground max-w-md">أنت مسجّل الدخول لكن ليس لديك صلاحية الوصول إلى لوحة التحكم.</p>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={signOut}>Sign out</Button>
-          <Button asChild><Link to="/">Back to site</Link></Button>
+          <Button variant="outline" onClick={signOut}>تسجيل الخروج</Button>
+          <Button asChild><Link to="/">العودة إلى الموقع</Link></Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div dir="ltr" className="min-h-screen flex bg-muted/20">
-      <aside className="w-60 shrink-0 border-r bg-card flex flex-col">
+    <div dir="rtl" className="min-h-screen flex bg-muted/20">
+      <aside className="w-60 shrink-0 border-e bg-card flex flex-col">
         <div className="px-5 py-5 border-b">
-          <div className="font-semibold">Tringle Accessoires</div>
-          <div className="text-xs text-muted-foreground">Admin dashboard</div>
+          <div className="font-semibold">ترينقل أكسسوار</div>
+          <div className="text-xs text-muted-foreground">لوحة التحكم</div>
         </div>
         <nav className="flex-1 p-3 space-y-1">
           {NAV.map((item) => {
@@ -77,10 +77,10 @@ function AdminLayout() {
         </nav>
         <div className="p-3 border-t space-y-1">
           <a href="/" target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted">
-            <ExternalLink className="h-4 w-4" /> View site
+            <ExternalLink className="h-4 w-4" /> عرض الموقع
           </a>
           <button onClick={signOut} className="w-full flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted">
-            <LogOut className="h-4 w-4" /> Sign out
+            <LogOut className="h-4 w-4" /> تسجيل الخروج
           </button>
         </div>
       </aside>

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { appointmentStatusLabel } from "@/lib/admin-i18n";
 
 const STATUSES = ["all", "pending", "confirmed", "completed", "cancelled"] as const;
 
@@ -39,16 +40,16 @@ function AppointmentsListPage() {
   return (
     <div className="p-6 lg:p-8 space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Appointments</h1>
-        <p className="text-sm text-muted-foreground">{data?.appointments.length ?? 0} results</p>
+        <h1 className="text-2xl font-semibold">المواعيد</h1>
+        <p className="text-sm text-muted-foreground">{data?.appointments.length ?? 0} نتيجة</p>
       </header>
 
       <Card>
         <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <CardTitle className="text-base">Filter</CardTitle>
+          <CardTitle className="text-base">تصفية</CardTitle>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <Input
-              placeholder="Search number, name, phone…"
+              placeholder="ابحث برقم الموعد أو الاسم أو الهاتف…"
               defaultValue={search.q}
               className="sm:w-64"
               onKeyDown={(e) => {
@@ -64,7 +65,7 @@ function AppointmentsListPage() {
               <SelectTrigger className="sm:w-48"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {STATUSES.map((s) => (
-                  <SelectItem key={s} value={s}>{s === "all" ? "All statuses" : s}</SelectItem>
+                  <SelectItem key={s} value={s}>{appointmentStatusLabel(s)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -74,21 +75,21 @@ function AppointmentsListPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Number</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Windows</TableHead>
-                <TableHead>Preferred date</TableHead>
-                <TableHead>Confirmed</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>رقم الموعد</TableHead>
+                <TableHead>الزبون</TableHead>
+                <TableHead>الهاتف</TableHead>
+                <TableHead>عدد النوافذ</TableHead>
+                <TableHead>التاريخ المفضل</TableHead>
+                <TableHead>التاريخ المؤكد</TableHead>
+                <TableHead>الحالة</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading && (
-                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">Loading…</TableCell></TableRow>
+                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">جارٍ التحميل…</TableCell></TableRow>
               )}
               {!isLoading && (data?.appointments.length ?? 0) === 0 && (
-                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">No appointments.</TableCell></TableRow>
+                <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">لا توجد مواعيد.</TableCell></TableRow>
               )}
               {data?.appointments.map((a: any) => (
                 <TableRow key={a.id}>
@@ -103,7 +104,7 @@ function AppointmentsListPage() {
                   <TableCell className="text-xs">{a.preferred_date}</TableCell>
                   <TableCell className="text-xs">{a.confirmed_date ?? "—"}</TableCell>
                   <TableCell>
-                    <Badge className={statusColor[a.status] || ""} variant="secondary">{a.status}</Badge>
+                    <Badge className={statusColor[a.status] || ""} variant="secondary">{appointmentStatusLabel(a.status)}</Badge>
                   </TableCell>
                 </TableRow>
               ))}
