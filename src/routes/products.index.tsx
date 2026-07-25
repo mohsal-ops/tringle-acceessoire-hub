@@ -10,7 +10,27 @@ import { Button } from "@/components/ui/button";
 import { useLocale, pickLocalized } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
+const CATEGORY_SELECT = "id,name_ar,name_fr,slug,icon,sort_order";
+const CATALOG_SELECT =
+  "id,slug,name_ar,name_fr,sizes,description_ar,description_fr,price,original_price,has_variants,created_at,category_id,categories(name_ar,name_fr),product_images(url,sort_order),product_variants(label,price,original_price,sort_order)";
+
+async function fetchCatalog() {
+  const [cats, prods] = await Promise.all([
+    supabase.from("categories").select(CATEGORY_SELECT).eq("is_active", true).order("sort_order"),
+    supabase.from("products").select(CATALOG_SELECT).eq("is_active", true).order("sort_order"),
+  ]);
+  if (cats.error) throw cats.error;
+  if (prods.error) throw prods.error;
+  return {
+    categories: cats.data ?? [],
+    products: (prods.data ?? []).map((p) => ({ ...p, category: p.categories })),
+  };
+}
+
 export const Route = createFileRoute("/products/")({
+  // SSR the catalog so crawlers/first paint get the full product grid.
+  loader: () => fetchCatalog(),
+  staleTime: 5 * 60 * 1000,
   head: () => ({
     meta: [
       { title: "المنتجات | Catalogue — Tringle Accessoires" },
@@ -26,30 +46,34 @@ type SortOpt = "default" | "newest" | "price_asc" | "price_desc";
 
 function CatalogPage() {
   const { t, locale } = useLocale();
+  const initial = Route.useLoaderData();
   const [search, setSearch] = useState("");
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [sort, setSort] = useState<SortOpt>("default");
 
   const categoriesQ = useQuery({
     queryKey: ["categories"],
+    initialData: initial.categories,
+    staleTime: 5 * 60 * 1000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("id,name_ar,name_fr,slug,icon,sort_order")
+        .select(CATEGORY_SELECT)
         .eq("is_active", true)
         .order("sort_order");
       if (error) throw error;
       return data;
     },
-    staleTime: 5 * 60 * 1000,
   });
 
   const productsQ = useQuery({
     queryKey: ["products", "all"],
+    initialData: initial.products,
+    staleTime: 5 * 60 * 1000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("id,slug,name_ar,name_fr,sizes,description_ar,description_fr,price,original_price,has_variants,created_at,category_id,categories(name_ar,name_fr),product_images(url,sort_order),product_variants(label,price,original_price,sort_order)")
+        .select(CATALOG_SELECT)
         .eq("is_active", true)
         .order("sort_order");
       if (error) throw error;

@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ChevronLeft, ShoppingCart, MessageCircle, Truck, ShieldCheck, Phone } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,7 +17,43 @@ import { useCart } from "@/lib/cart";
 import { useSettings } from "@/hooks/useSettings";
 import type { Variant } from "@/components/site/OrderForm";
 
+const PRODUCT_SELECT =
+  "*,categories(id,name_ar,name_fr,slug),product_images(url,sort_order),product_variants(id,label,price,original_price,stock,sort_order)";
+
+async function fetchProductBySlug(slug: string) {
+  const { data, error } = await supabase
+    .from("products")
+    .select(PRODUCT_SELECT)
+    .eq("slug", slug)
+    .eq("is_active", true)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) throw notFound();
+  return data;
+}
+
 export const Route = createFileRoute("/products/$slug")({
+  // Server-render the product so ad crawlers and slow first paints get complete
+  // HTML, not a spinner. Loader data is cached for 5 min (Phase 4.2).
+  loader: ({ params }) => fetchProductBySlug(params.slug),
+  staleTime: 5 * 60 * 1000,
+  head: ({ loaderData }) => {
+    if (!loaderData) return {};
+    const p = loaderData as Record<string, any>;
+    const title = `${p.name_ar} | ${p.name_fr}`;
+    const desc = (p.description_fr || p.description_ar || "").slice(0, 160);
+    const img = (p.product_images ?? []).slice().sort((a: any, b: any) => a.sort_order - b.sort_order)[0]?.url;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "product" },
+        ...(img ? [{ property: "og:image", content: img } as const, { name: "twitter:image", content: img } as const] : []),
+      ],
+    };
+  },
   component: ProductDetailPage,
   notFoundComponent: () => (
     <SiteLayout>
@@ -35,66 +71,35 @@ export const Route = createFileRoute("/products/$slug")({
 });
 
 function ProductDetailPage() {
-  const { slug } = Route.useParams();
   const { t, locale } = useLocale();
   const addToCart = useCart((s) => s.add);
   const { get } = useSettings();
   const wa = get("whatsapp_number", "+213561238016").replace(/\D/g, "");
 
+  // SSR'd product from the route loader — guaranteed present on first render.
+  const p = Route.useLoaderData();
+
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
 
-  const productQ = useQuery({
-    queryKey: ["product", slug],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*,categories(id,name_ar,name_fr,slug),product_images(url,sort_order),product_variants(id,label,price,original_price,stock,sort_order)")
-        .eq("slug", slug)
-        .eq("is_active", true)
-        .maybeSingle();
-      if (error) throw error;
-      if (!data) throw notFound();
-      return data;
-    },
-  });
-
   const relatedQ = useQuery({
-    queryKey: ["related", productQ.data?.category_id, productQ.data?.id],
-    enabled: !!productQ.data?.category_id,
+    queryKey: ["related", p.category_id, p.id],
+    enabled: !!p.category_id,
+    staleTime: 5 * 60 * 1000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
         .select("id,slug,name_ar,name_fr,price,created_at,categories(name_ar,name_fr),product_images(url,sort_order),product_variants(id,label,price,original_price,stock,sort_order),has_variants,original_price")
         .eq("is_active", true)
-        .eq("category_id", productQ.data!.category_id!)
-        .neq("id", productQ.data!.id)
+        .eq("category_id", p.category_id!)
+        .neq("id", p.id)
         .limit(4);
       if (error) throw error;
-      return (data ?? []).map((p) => ({ ...p, category: p.categories }));
+      return (data ?? []).map((rp) => ({ ...rp, category: rp.categories }));
     },
   });
 
-  const reviewsQ = useProductReviews(productQ.data?.id ?? "");
-
-  if (productQ.isLoading || !productQ.data) {
-    return (
-      <SiteLayout>
-        <div className="mx-auto max-w-6xl px-4 py-16">
-          <div className="grid gap-10 md:grid-cols-2">
-            <div className="aspect-square animate-pulse rounded-2xl bg-muted" />
-            <div className="space-y-4">
-              <div className="h-8 w-2/3 animate-pulse rounded bg-muted" />
-              <div className="h-6 w-1/3 animate-pulse rounded bg-muted" />
-              <div className="h-32 animate-pulse rounded bg-muted" />
-            </div>
-          </div>
-        </div>
-      </SiteLayout>
-    );
-  }
-
-  const p = productQ.data;
+  const reviewsQ = useProductReviews(p.id);
   const images = (p.product_images ?? []).slice().sort((a, b) => a.sort_order - b.sort_order);
   const name = pickLocalized(p as unknown as Record<string, unknown>, "name", locale);
   const description = pickLocalized(p as unknown as Record<string, unknown>, "description", locale);
