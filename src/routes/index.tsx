@@ -147,8 +147,8 @@ function HomePage() {
               ))}
             </div>
           )}
-        </div>
       </section>
+
 
       {/* FEATURES */}
       <section className="mx-auto -mt-12 max-w-6xl px-4 relative z-10">
