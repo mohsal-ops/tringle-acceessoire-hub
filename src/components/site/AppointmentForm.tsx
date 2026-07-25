@@ -2,7 +2,8 @@ import { useState } from "react";
 import { addDays, format } from "date-fns";
 import { CalendarIcon, CheckCircle2, ChevronLeft, ChevronRight, Loader2, Minus, Plus } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { createAppointment } from "@/lib/appointments.functions";
 import { useLocale } from "@/lib/i18n";
 import { useSettings } from "@/hooks/useSettings";
 import { formatPrice } from "@/lib/format";
@@ -43,6 +44,7 @@ const initial: Form = {
 export function AppointmentForm() {
   const { t, locale } = useLocale();
   const { get } = useSettings();
+  const submitAppointment = useServerFn(createAppointment);
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<Form>(initial);
   const [submitting, setSubmitting] = useState(false);
@@ -119,26 +121,21 @@ export function AppointmentForm() {
 
     setSubmitting(true);
     try {
-      const { data: numData, error: numErr } = await supabase.rpc("next_appointment_number");
-      if (numErr || !numData) throw numErr ?? new Error("number");
-      const apptNumber = numData as unknown as string;
-
-      const { error } = await supabase.from("appointments").insert({
-        appointment_number: apptNumber,
-        customer_name: form.customer_name.trim(),
-        customer_phone: form.customer_phone,
-        customer_email: form.customer_email.trim() || null,
-        wilaya_id: form.wilaya_id,
-        city_id: form.city_id,
-        preferred_date: format(form.preferred_date!, "yyyy-MM-dd"),
-        window_count: form.window_count,
-        description: form.description.trim() || null,
-        travel_cost: travelCost,
+      const res = await submitAppointment({
+        data: {
+          customer_name: form.customer_name,
+          customer_phone: form.customer_phone,
+          customer_email: form.customer_email.trim() || null,
+          wilaya_id: form.wilaya_id!,
+          city_id: form.city_id,
+          preferred_date: format(form.preferred_date!, "yyyy-MM-dd"),
+          window_count: form.window_count,
+          description: form.description.trim() || null,
+        },
       });
-      if (error) throw error;
 
       localStorage.setItem("appointment_last_submit", String(Date.now()));
-      setSuccessNumber(apptNumber);
+      setSuccessNumber(res.appointment_number);
     } catch (e) {
       console.error(e);
       toast.error(t({ ar: "فشل إرسال الحجز. حاول مرة أخرى.", fr: "Échec de l'envoi. Réessayez." }));
