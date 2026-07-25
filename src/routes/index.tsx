@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { CalendarCheck, Hammer, Home as HomeIcon, Palette, MessageCircle, Ruler, Truck, ShieldCheck, Phone } from "lucide-react";
+import { CalendarCheck, Hammer, Home as HomeIcon, Palette, MessageCircle, Ruler } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { ProductCard, ProductCardSkeleton } from "@/components/site/ProductCard";
