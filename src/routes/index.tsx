@@ -39,8 +39,17 @@ function HomePage() {
   const { t, locale } = useLocale();
   const { get } = useSettings();
 
-  const heroTitle = locale === "ar" ? get("hero_title_ar", "ستائر تليق ببيتك") : get("hero_title_fr", "Des rideaux à la hauteur de votre intérieur");
-  const heroSubtitle = locale === "ar" ? get("hero_subtitle_ar") : get("hero_subtitle_fr");
+  const heroTitle = locale === "ar" ? get("hero_title_ar", "زيّن دارك يزيانو حوالك") : get("hero_title_fr", "Habillez votre maison, sublimez votre quotidien");
+  const heroSubtitle = locale === "ar"
+    ? get("hero_subtitle_ar", "ستائر، سكك و إكسسوارات فاخرة — قياس مجاني، تركيب احترافي في جميع ولايات الجزائر.")
+    : get("hero_subtitle_fr", "Rideaux, tringles et accessoires — mesure gratuite et pose pro dans toute l'Algérie.");
+
+  const waRaw = get("whatsapp_number", "+213561238016").replace(/\D/g, "");
+  const waHref = `https://wa.me/${waRaw}?text=${encodeURIComponent(
+    locale === "ar"
+      ? "مرحبا، نحتاج استشارة حول الستائر والسكك والأسعار"
+      : "Bonjour, j'aimerais une consultation sur vos rideaux et tringles",
+  )}`;
 
   const heroImages = useMemo(() => {
     const raw = get("hero_images") || get("hero_image_url") || "";
