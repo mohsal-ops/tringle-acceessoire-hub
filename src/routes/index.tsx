@@ -99,26 +99,42 @@ function HomePage() {
         ))}
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/40 via-black/55 to-black/75" />
         <div className="relative mx-auto flex min-h-[70vh] md:min-h-[85vh] max-w-7xl flex-col items-center justify-center px-4 py-20 text-center text-white">
-          <h1 className="max-w-3xl text-4xl md:text-6xl font-bold leading-tight drop-shadow">{heroTitle}</h1>
+          <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur px-4 py-1.5 text-xs md:text-sm font-medium text-white ring-1 ring-white/25">
+            <Ruler className="h-3.5 w-3.5" />
+            {t({ ar: "قياس مجاني • تركيب احترافي • ضمان الجودة", fr: "Mesure gratuite • Pose pro • Qualité garantie" })}
+          </span>
+          <h1
+            className="max-w-4xl text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight drop-shadow-2xl"
+            style={{ fontFamily: locale === "ar" ? '"Noto Sans Arabic", sans-serif' : undefined }}
+          >
+            {heroTitle}
+          </h1>
           {heroSubtitle && (
             <p className="mt-6 max-w-2xl text-base md:text-xl text-white/90 leading-relaxed">{heroSubtitle}</p>
           )}
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto">
             <Button
               asChild
               size="lg"
-              className="group relative h-14 px-8 text-base md:text-lg font-bold bg-primary text-primary-foreground hover:bg-primary-dark shadow-elegant ring-4 ring-primary/30 hover:ring-primary/50 transition-all hover:scale-105 animate-pulse-slow"
+              className="group relative h-14 w-full sm:w-auto px-8 text-base md:text-lg font-bold bg-[#25D366] text-white hover:bg-[#20bd5a] shadow-2xl ring-4 ring-[#25D366]/30 hover:ring-[#25D366]/50 transition-all hover:scale-105"
             >
-              <a href="#book" className="inline-flex items-center gap-2">
-                <CalendarCheck className="h-5 w-5" />
-                {t({ ar: "احجز زيارة منزلية مجانية", fr: "Réserver une visite gratuite" })}
+              <a href={waHref} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
+                <MessageCircle className="h-5 w-5" />
+                {t({ ar: "استشرنا واطلب عبر واتساب", fr: "Commander sur WhatsApp" })}
                 <span aria-hidden className="inline-block transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1">→</span>
               </a>
             </Button>
-            <Button asChild size="lg" variant="outline" className="h-14 px-6 bg-transparent text-white border-white/80 hover:bg-white hover:text-primary">
-              <Link to="/products">{t({ ar: "تصفح المنتجات", fr: "Voir les produits" })}</Link>
+            <Button asChild size="lg" variant="outline" className="h-14 w-full sm:w-auto px-6 bg-transparent text-white border-white/80 hover:bg-white hover:text-primary">
+              <Link to="/products">{t({ ar: "تصفح المنتجات والأسعار", fr: "Voir les produits & prix" })}</Link>
+            </Button>
+            <Button asChild size="lg" variant="ghost" className="h-14 w-full sm:w-auto px-4 text-white hover:bg-white/10">
+              <a href="#book" className="inline-flex items-center gap-2">
+                <CalendarCheck className="h-5 w-5" />
+                {t({ ar: "زيارة منزلية مجانية", fr: "Visite gratuite" })}
+              </a>
             </Button>
           </div>
+        </div>
           {heroImages.length > 1 && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
               {heroImages.map((_, i) => (
