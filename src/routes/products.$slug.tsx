@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronLeft, ShoppingCart, MessageCircle, Truck, ShieldCheck, Phone } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useLocale, pickLocalized } from "@/lib/i18n";
 import { formatPrice } from "@/lib/format";
 import { useCart } from "@/lib/cart";
+import { trackViewContent } from "@/lib/pixels";
 import { useSettings } from "@/hooks/useSettings";
 import type { Variant } from "@/components/site/OrderForm";
 
@@ -81,6 +82,10 @@ function ProductDetailPage() {
 
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
+
+  useEffect(() => {
+    trackViewContent({ id: p.id, name: p.name_fr || p.name_ar, price: Number(p.price) });
+  }, [p.id, p.name_fr, p.name_ar, p.price]);
 
   const relatedQ = useQuery({
     queryKey: ["related", p.category_id, p.id],

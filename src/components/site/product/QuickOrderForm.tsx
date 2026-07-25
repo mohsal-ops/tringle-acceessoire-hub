@@ -6,6 +6,7 @@ import { CheckCircle2, Loader2, ShoppingCart, MessageCircle } from "lucide-react
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { createCustomerOrder } from "@/lib/orders.functions";
+import { trackPurchase } from "@/lib/pixels";
 import { useLocale } from "@/lib/i18n";
 import { formatPrice } from "@/lib/format";
 import { Button } from "@/components/ui/button";
@@ -101,6 +102,7 @@ export function QuickOrderForm({
           ],
         },
       });
+      trackPurchase(res.total, [{ id: productId, name: name_fr || name_ar, price: unitPrice, qty }]);
       toast.success(t({ ar: "تم تسجيل طلبك!", fr: "Commande enregistrée !" }), {
         icon: <CheckCircle2 className="h-4 w-4" />,
       });

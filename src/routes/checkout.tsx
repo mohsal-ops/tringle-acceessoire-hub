@@ -6,6 +6,7 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { createCustomerOrder } from "@/lib/orders.functions";
+import { trackPurchase } from "@/lib/pixels";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { useCart, cartSubtotal } from "@/lib/cart";
 import { useLocale } from "@/lib/i18n";
@@ -77,6 +78,7 @@ function CheckoutPage() {
           })),
         },
       });
+      trackPurchase(res.total, items.map((i) => ({ id: i.product_id, name: i.name_fr || i.name_ar, price: i.price, qty: i.qty })));
       clear();
       toast.success(t({ ar: "تم استلام طلبك!", fr: "Commande enregistrée !" }), { icon: <CheckCircle2 className="h-4 w-4" /> });
       navigate({ to: "/order-confirmation/$number", params: { number: res.order_number } });

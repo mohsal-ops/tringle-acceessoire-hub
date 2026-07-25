@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { trackAddToCart } from "@/lib/pixels";
 
 export interface CartItem {
   id: string; // productId + optional variantId
@@ -28,6 +29,12 @@ export const useCart = create<CartState>()(
       items: [],
       add: (item) =>
         set((s) => {
+          trackAddToCart({
+            id: item.product_id,
+            name: item.name_fr || item.name_ar,
+            price: item.price,
+            qty: item.qty ?? 1,
+          });
           const existing = s.items.find((i) => i.id === item.id);
           if (existing) {
             return {

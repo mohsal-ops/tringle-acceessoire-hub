@@ -4,6 +4,7 @@ import { CalendarIcon, CheckCircle2, ChevronLeft, ChevronRight, Loader2, Minus, 
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { createAppointment } from "@/lib/appointments.functions";
+import { trackLead } from "@/lib/pixels";
 import { useLocale } from "@/lib/i18n";
 import { useSettings } from "@/hooks/useSettings";
 import { formatPrice } from "@/lib/format";
@@ -134,6 +135,7 @@ export function AppointmentForm() {
         },
       });
 
+      trackLead(travelCost);
       localStorage.setItem("appointment_last_submit", String(Date.now()));
       setSuccessNumber(res.appointment_number);
     } catch (e) {
