@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { CalendarCheck, Hammer, Home as HomeIcon, Palette } from "lucide-react";
+import { CalendarCheck, Hammer, Home as HomeIcon, Palette, MessageCircle, Ruler } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { ProductCard, ProductCardSkeleton } from "@/components/site/ProductCard";
@@ -39,8 +39,17 @@ function HomePage() {
   const { t, locale } = useLocale();
   const { get } = useSettings();
 
-  const heroTitle = locale === "ar" ? get("hero_title_ar", "ستائر تليق ببيتك") : get("hero_title_fr", "Des rideaux à la hauteur de votre intérieur");
-  const heroSubtitle = locale === "ar" ? get("hero_subtitle_ar") : get("hero_subtitle_fr");
+  const heroTitle = locale === "ar" ? get("hero_title_ar", "زيّن دارك يزيانو حوالك") : get("hero_title_fr", "Habillez votre maison, sublimez votre quotidien");
+  const heroSubtitle = locale === "ar"
+    ? get("hero_subtitle_ar", "ستائر، سكك و إكسسوارات فاخرة — قياس مجاني، تركيب احترافي في جميع ولايات الجزائر.")
+    : get("hero_subtitle_fr", "Rideaux, tringles et accessoires — mesure gratuite et pose pro dans toute l'Algérie.");
+
+  const waRaw = get("whatsapp_number", "+213561238016").replace(/\D/g, "");
+  const waHref = `https://wa.me/${waRaw}?text=${encodeURIComponent(
+    locale === "ar"
+      ? "مرحبا، نحتاج استشارة حول الستائر والسكك والأسعار"
+      : "Bonjour, j'aimerais une consultation sur vos rideaux et tringles",
+  )}`;
 
   const heroImages = useMemo(() => {
     const raw = get("hero_images") || get("hero_image_url") || "";
@@ -60,7 +69,7 @@ function HomePage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("id,slug,name_ar,name_fr,price,original_price,has_variants,created_at,categories(name_ar,name_fr),product_images(url,sort_order),product_variants(price,original_price)")
+        .select("id,slug,name_ar,name_fr,sizes,price,original_price,has_variants,created_at,categories(name_ar,name_fr),product_images(url,sort_order),product_variants(label,price,original_price,sort_order)")
         .eq("is_active", true)
         .eq("is_featured", true)
         .order("sort_order")
@@ -90,26 +99,42 @@ function HomePage() {
         ))}
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/40 via-black/55 to-black/75" />
         <div className="relative mx-auto flex min-h-[70vh] md:min-h-[85vh] max-w-7xl flex-col items-center justify-center px-4 py-20 text-center text-white">
-          <h1 className="max-w-3xl text-4xl md:text-6xl font-bold leading-tight drop-shadow">{heroTitle}</h1>
+          <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur px-4 py-1.5 text-xs md:text-sm font-medium text-white ring-1 ring-white/25">
+            <Ruler className="h-3.5 w-3.5" />
+            {t({ ar: "قياس مجاني • تركيب احترافي • ضمان الجودة", fr: "Mesure gratuite • Pose pro • Qualité garantie" })}
+          </span>
+          <h1
+            className="max-w-4xl text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight drop-shadow-2xl"
+            style={{ fontFamily: locale === "ar" ? '"Noto Sans Arabic", sans-serif' : undefined }}
+          >
+            {heroTitle}
+          </h1>
           {heroSubtitle && (
             <p className="mt-6 max-w-2xl text-base md:text-xl text-white/90 leading-relaxed">{heroSubtitle}</p>
           )}
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto">
             <Button
               asChild
               size="lg"
-              className="group relative h-14 px-8 text-base md:text-lg font-bold bg-primary text-primary-foreground hover:bg-primary-dark shadow-elegant ring-4 ring-primary/30 hover:ring-primary/50 transition-all hover:scale-105 animate-pulse-slow"
+              className="group relative h-14 w-full sm:w-auto px-8 text-base md:text-lg font-bold bg-[#25D366] text-white hover:bg-[#20bd5a] shadow-2xl ring-4 ring-[#25D366]/30 hover:ring-[#25D366]/50 transition-all hover:scale-105"
             >
-              <a href="#book" className="inline-flex items-center gap-2">
-                <CalendarCheck className="h-5 w-5" />
-                {t({ ar: "احجز زيارة منزلية مجانية", fr: "Réserver une visite gratuite" })}
+              <a href={waHref} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
+                <MessageCircle className="h-5 w-5" />
+                {t({ ar: "استشرنا واطلب عبر واتساب", fr: "Commander sur WhatsApp" })}
                 <span aria-hidden className="inline-block transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1">→</span>
               </a>
             </Button>
-            <Button asChild size="lg" variant="outline" className="h-14 px-6 bg-transparent text-white border-white/80 hover:bg-white hover:text-primary">
-              <Link to="/products">{t({ ar: "تصفح المنتجات", fr: "Voir les produits" })}</Link>
+            <Button asChild size="lg" variant="outline" className="h-14 w-full sm:w-auto px-6 bg-transparent text-white border-white/80 hover:bg-white hover:text-primary">
+              <Link to="/products">{t({ ar: "تصفح المنتجات والأسعار", fr: "Voir les produits & prix" })}</Link>
+            </Button>
+            <Button asChild size="lg" variant="ghost" className="h-14 w-full sm:w-auto px-4 text-white hover:bg-white/10">
+              <a href="#book" className="inline-flex items-center gap-2">
+                <CalendarCheck className="h-5 w-5" />
+                {t({ ar: "زيارة منزلية مجانية", fr: "Visite gratuite" })}
+              </a>
             </Button>
           </div>
+        </div>
           {heroImages.length > 1 && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
               {heroImages.map((_, i) => (
@@ -122,8 +147,8 @@ function HomePage() {
               ))}
             </div>
           )}
-        </div>
       </section>
+
 
       {/* FEATURES */}
       <section className="mx-auto -mt-12 max-w-6xl px-4 relative z-10">
@@ -147,8 +172,46 @@ function HomePage() {
         </div>
       </section>
 
+      {/* WHATSAPP CTA BANNER — decision-oriented */}
+      <section className="mx-auto max-w-7xl px-4 mt-16">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#128C7E] via-[#25D366] to-[#25D366] p-8 md:p-12 text-white shadow-2xl">
+          <div className="absolute -end-16 -top-16 h-64 w-64 rounded-full bg-white/10" />
+          <div className="absolute -start-10 -bottom-10 h-48 w-48 rounded-full bg-white/10" />
+          <div className="relative grid gap-6 md:grid-cols-[1fr_auto] items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold ring-1 ring-white/25">
+                <MessageCircle className="h-3.5 w-3.5" />
+                {t({ ar: "استشارة مجانية فورية", fr: "Conseil gratuit et immédiat" })}
+              </div>
+              <h2 className="mt-3 text-2xl md:text-4xl font-extrabold leading-tight">
+                {t({
+                  ar: "محتار في المقاس أو النموذج؟ راسلنا الآن على واتساب",
+                  fr: "Une question sur les mesures ou les modèles ? Écrivez-nous sur WhatsApp",
+                })}
+              </h2>
+              <p className="mt-2 text-white/90 md:text-lg">
+                {t({
+                  ar: "نساعدك تختار الأنسب لدارك — أسعار، مقاسات، ألوان و توصيات — بدون أي التزام.",
+                  fr: "On vous aide à choisir ce qui convient à votre intérieur — prix, mesures, couleurs, conseils — sans engagement.",
+                })}
+              </p>
+            </div>
+            <a
+              href={waHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 rounded-full bg-white text-[#128C7E] px-8 py-4 text-lg font-extrabold shadow-xl hover:scale-105 transition-transform whitespace-nowrap"
+            >
+              <MessageCircle className="h-6 w-6" />
+              {t({ ar: "تواصل الآن", fr: "Discuter maintenant" })}
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* FEATURED PRODUCTS */}
       <section className="mx-auto max-w-7xl px-4 py-20">
+
         <div className="mb-10 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground">
             {t({ ar: "منتجاتنا المميزة", fr: "Nos produits vedettes" })}
