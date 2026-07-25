@@ -12,10 +12,11 @@ export interface ProductCardProduct {
   price: number;
   original_price?: number | null;
   has_variants?: boolean;
+  sizes?: string[] | null;
   created_at?: string | null;
   category?: { name_ar: string; name_fr: string } | null;
   product_images?: { url: string; sort_order: number }[] | null;
-  product_variants?: { price: number | string; original_price: number | string | null }[] | null;
+  product_variants?: { label?: string; price: number | string; original_price: number | string | null; sort_order?: number }[] | null;
 }
 
 export function ProductCard({ product }: { product: ProductCardProduct }) {
@@ -100,6 +101,12 @@ export function ProductCard({ product }: { product: ProductCardProduct }) {
       <div className="p-4">
         <h3 className={cn("font-semibold text-foreground line-clamp-2 min-h-[2.5rem]")}>{name}</h3>
         {(() => {
+          const variantLabels = (product.product_variants ?? [])
+            .slice()
+            .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+            .map((v) => v.label)
+            .filter((s): s is string => !!s && s.length > 0);
+          const sizeLabels = variantLabels.length > 0 ? variantLabels : (product.sizes ?? []);
           const variantPrices = (product.product_variants ?? []).map((v) => Number(v.price));
           const hasVariants = !!product.has_variants && variantPrices.length > 0;
           const minPrice = hasVariants ? Math.min(...variantPrices) : Number(product.price);
@@ -108,23 +115,39 @@ export function ProductCard({ product }: { product: ProductCardProduct }) {
           const showDiscount = !hasVariants && original != null && original > minPrice;
           const pct = showDiscount ? Math.round(((original! - minPrice) / original!) * 100) : 0;
           return (
-            <div className="mt-3 flex items-center justify-between gap-2">
-              <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="text-lg font-bold text-primary">
-                  {formatPrice(minPrice, locale)}
-                  {hasVariants && maxPrice !== minPrice && <> – {formatPrice(maxPrice, locale)}</>}
+            <>
+              {sizeLabels.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {sizeLabels.slice(0, 5).map((s) => (
+                    <span key={s} className="rounded-md border border-primary/25 bg-primary/5 px-1.5 py-0.5 text-[11px] font-medium text-primary">
+                      {s}
+                    </span>
+                  ))}
+                  {sizeLabels.length > 5 && (
+                    <span className="rounded-md bg-muted px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+                      +{sizeLabels.length - 5}
+                    </span>
+                  )}
+                </div>
+              )}
+              <div className="mt-3 flex items-center justify-between gap-2">
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-lg font-bold text-primary">
+                    {formatPrice(minPrice, locale)}
+                    {hasVariants && maxPrice !== minPrice && <> – {formatPrice(maxPrice, locale)}</>}
+                  </span>
+                  {showDiscount && (
+                    <>
+                      <span className="text-xs text-muted-foreground line-through">{formatPrice(original!, locale)}</span>
+                      <span className="rounded bg-destructive px-1.5 py-0.5 text-[10px] font-bold text-destructive-foreground">-{pct}%</span>
+                    </>
+                  )}
+                </div>
+                <span className="text-xs font-medium text-muted-foreground group-hover:text-primary transition-colors">
+                  {locale === "ar" ? "عرض ←" : "Voir →"}
                 </span>
-                {showDiscount && (
-                  <>
-                    <span className="text-xs text-muted-foreground line-through">{formatPrice(original!, locale)}</span>
-                    <span className="rounded bg-destructive px-1.5 py-0.5 text-[10px] font-bold text-destructive-foreground">-{pct}%</span>
-                  </>
-                )}
               </div>
-              <span className="text-xs font-medium text-muted-foreground group-hover:text-primary transition-colors">
-                {locale === "ar" ? "عرض ←" : "Voir →"}
-              </span>
-            </div>
+            </>
           );
         })()}
       </div>
