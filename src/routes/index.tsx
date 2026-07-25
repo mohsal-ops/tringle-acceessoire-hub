@@ -172,8 +172,46 @@ function HomePage() {
         </div>
       </section>
 
+      {/* WHATSAPP CTA BANNER — decision-oriented */}
+      <section className="mx-auto max-w-7xl px-4 mt-16">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#128C7E] via-[#25D366] to-[#25D366] p-8 md:p-12 text-white shadow-2xl">
+          <div className="absolute -end-16 -top-16 h-64 w-64 rounded-full bg-white/10" />
+          <div className="absolute -start-10 -bottom-10 h-48 w-48 rounded-full bg-white/10" />
+          <div className="relative grid gap-6 md:grid-cols-[1fr_auto] items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold ring-1 ring-white/25">
+                <MessageCircle className="h-3.5 w-3.5" />
+                {t({ ar: "استشارة مجانية فورية", fr: "Conseil gratuit et immédiat" })}
+              </div>
+              <h2 className="mt-3 text-2xl md:text-4xl font-extrabold leading-tight">
+                {t({
+                  ar: "محتار في المقاس أو النموذج؟ راسلنا الآن على واتساب",
+                  fr: "Une question sur les mesures ou les modèles ? Écrivez-nous sur WhatsApp",
+                })}
+              </h2>
+              <p className="mt-2 text-white/90 md:text-lg">
+                {t({
+                  ar: "نساعدك تختار الأنسب لدارك — أسعار، مقاسات، ألوان و توصيات — بدون أي التزام.",
+                  fr: "On vous aide à choisir ce qui convient à votre intérieur — prix, mesures, couleurs, conseils — sans engagement.",
+                })}
+              </p>
+            </div>
+            <a
+              href={waHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 rounded-full bg-white text-[#128C7E] px-8 py-4 text-lg font-extrabold shadow-xl hover:scale-105 transition-transform whitespace-nowrap"
+            >
+              <MessageCircle className="h-6 w-6" />
+              {t({ ar: "تواصل الآن", fr: "Discuter maintenant" })}
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* FEATURED PRODUCTS */}
       <section className="mx-auto max-w-7xl px-4 py-20">
+
         <div className="mb-10 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground">
             {t({ ar: "منتجاتنا المميزة", fr: "Nos produits vedettes" })}
