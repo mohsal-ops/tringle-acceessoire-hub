@@ -54,7 +54,7 @@ function TermsPage() {
     {
       title: t({ ar: "التركيب والزيارة المنزلية", fr: "Pose et visite à domicile" }),
       body: t({
-        ar: "خدمة Visit المنزلية المجانية لتأخذ المقاسات لا تلزمك بالشراء. إذا طلبت التركيب، يتم الاتفاق على موعده ومبلغه قبل التدخل.",
+        ar: "خدمة الزيارة المنزلية المجانية لأخذ المقاسات لا تلزمك بالشراء. إذا طلبت التركيب، يتم الاتفاق على موعده ومبلغه قبل التدخل.",
         fr: "La visite à domicile gratuite pour la prise de mesures n'engage pas à l'achat. Si vous demandez la pose, son rendez-vous et son tarif sont convenus avant l'intervention.",
       }),
     },
