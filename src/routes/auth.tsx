@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  head: () => ({ meta: [{ title: "تسجيل الدخول — لوحة تحكم ترينقل أكسسوار" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "تسجيل الدخول — لوحة تحكم ترينقلز أكسسوار" }, { name: "robots", content: "noindex" }] }),
   component: AuthPage,
 });
 
@@ -27,7 +27,7 @@ function AuthPage() {
     <div dir="rtl" className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-center">ترينقل أكسسوار — لوحة التحكم</CardTitle>
+          <CardTitle className="text-center">ترينقلز أكسسوار — لوحة التحكم</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
