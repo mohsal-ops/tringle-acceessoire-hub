@@ -9,7 +9,7 @@ import { formatPrice } from "@/lib/format";
 export const Route = createFileRoute("/shipping")({
   head: () => ({
     meta: [
-      { title: "Livraison — Tringle Accessoires" },
+      { title: "Livraison — Tringles Accessoires" },
       { name: "description", content: "Frais et délais de livraison dans toutes les wilayas d'Algérie." },
     ],
   }),

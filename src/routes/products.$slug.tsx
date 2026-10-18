@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, type ErrorComponentProps } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ShoppingCart, MessageCircle, Truck, ShieldCheck, Phone } from "lucide-react";
@@ -64,9 +64,11 @@ export const Route = createFileRoute("/products/$slug")({
       </div>
     </SiteLayout>
   ),
-  errorComponent: ({ error }) => (
+  errorComponent: ({ error }: ErrorComponentProps) => (
     <SiteLayout>
-      <div className="mx-auto max-w-2xl px-4 py-24 text-center text-destructive"><p>{error.message}</p></div>
+      <div className="mx-auto max-w-2xl px-4 py-24 text-center text-destructive">
+        <p>{error instanceof Error ? error.message : String(error)}</p>
+      </div>
     </SiteLayout>
   ),
 });

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   ssr: false,
-  head: () => ({ meta: [{ title: "لوحة التحكم — ترينقل أكسسوار" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "لوحة التحكم — ترينقلز أكسسوار" }, { name: "robots", content: "noindex" }] }),
   component: AdminLayout,
 });
 
@@ -54,7 +54,7 @@ function AdminLayout() {
     <div dir="rtl" className="min-h-screen flex bg-muted/20">
       <aside className="w-60 shrink-0 border-e bg-card flex flex-col">
         <div className="px-5 py-5 border-b">
-          <div className="font-semibold">ترينقل أكسسوار</div>
+          <div className="font-semibold">ترينقلز أكسسوار</div>
           <div className="text-xs text-muted-foreground">لوحة التحكم</div>
         </div>
         <nav className="flex-1 p-3 space-y-1">

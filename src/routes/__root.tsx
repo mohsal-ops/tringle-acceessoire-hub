@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
@@ -37,7 +38,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -77,7 +78,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Rideaux" },
       { name: "description", content: "Rideaux, rails et accessoires en Algérie. Visite à domicile gratuite." },
-      { name: "author", content: "Tringle Accessoires" },
+      { name: "author", content: "Tringles Accessoires" },
       { property: "og:title", content: "Rideaux" },
       { property: "og:description", content: "Rideaux, rails et accessoires en Algérie. Visite à domicile gratuite." },
       { property: "og:type", content: "website" },

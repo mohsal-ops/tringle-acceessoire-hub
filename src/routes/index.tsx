@@ -22,13 +22,13 @@ const DEFAULT_HERO_IMAGES = [
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Tringle Accessoires — ترينقل أكسسوار | ستائر وديكور في الجزائر" },
+      { title: "Tringles Accessoires — ترينقلز أكسسوار | ستائر وديكور في الجزائر" },
       {
         name: "description",
         content:
           "تشكيلة واسعة من الستائر، السكك والإكسسوارات. زيارة منزلية مجانية وتركيب احترافي في جميع ولايات الجزائر.",
       },
-      { property: "og:title", content: "Tringle Accessoires — ستائر وديكور في الجزائر" },
+      { property: "og:title", content: "Tringles Accessoires — ستائر وديكور في الجزائر" },
       { property: "og:description", content: "زيارة منزلية مجانية وتركيب احترافي." },
     ],
   }),
