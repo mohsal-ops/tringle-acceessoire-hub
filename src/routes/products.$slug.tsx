@@ -64,9 +64,11 @@ export const Route = createFileRoute("/products/$slug")({
       </div>
     </SiteLayout>
   ),
-  errorComponent: ({ error }) => (
+  errorComponent: ({ error }: ErrorComponentProps) => (
     <SiteLayout>
-      <div className="mx-auto max-w-2xl px-4 py-24 text-center text-destructive"><p>{error.message}</p></div>
+      <div className="mx-auto max-w-2xl px-4 py-24 text-center text-destructive">
+        <p>{error instanceof Error ? error.message : String(error)}</p>
+      </div>
     </SiteLayout>
   ),
 });
