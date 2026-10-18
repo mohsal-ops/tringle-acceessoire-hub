@@ -33,7 +33,7 @@ function TermsPage() {
     {
       title: t({ ar: "الأسعار", fr: "Prix" }),
       body: t({
-        ar: "الأسعار المعروضة بالدينار الجزائري لكل منتج ومقاس، وقد تتغير حسب توفّر القماش أوmodel. سعر تسليم الولاية يُحسب تلقائيًا في نموذج الطلب حسب الولاية ونوع التسليم (إلى المنزل أو إلى مكتب التوصيل).",
+        ar: "الأسعار المعروضة بالدينار الجزائري لكل منتج ومقاس، وقد تتغير حسب توفّر القماش أو الموديل. سعر تسليم الولاية يُحسب تلقائيًا في نموذج الطلب حسب الولاية ونوع التسليم (إلى المنزل أو إلى مكتب التوصيل).",
         fr: "Les prix affichés sont en dinars algériens, par produit et par taille, et peuvent évoluer selon la disponibilité des tissus. Les frais de livraison de la wilaya sont calculés automatiquement dans le formulaire selon la wilaya et le mode de livraison (à domicile ou en bureau).",
       }),
     },
