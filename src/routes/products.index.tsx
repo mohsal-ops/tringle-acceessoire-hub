@@ -33,9 +33,9 @@ export const Route = createFileRoute("/products/")({
   staleTime: 5 * 60 * 1000,
   head: () => ({
     meta: [
-      { title: "المنتجات | Catalogue — Tringle Accessoires" },
+      { title: "المنتجات | Catalogue — Tringles Accessoires" },
       { name: "description", content: "Découvrez notre catalogue complet de rideaux, rails et accessoires." },
-      { property: "og:title", content: "Catalogue — Tringle Accessoires" },
+      { property: "og:title", content: "Catalogue — Tringles Accessoires" },
       { property: "og:description", content: "Rideaux, rails et accessoires de qualité." },
     ],
   }),

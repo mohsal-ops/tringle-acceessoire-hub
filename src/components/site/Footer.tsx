@@ -15,7 +15,7 @@ export function Footer() {
   const { t, locale } = useLocale();
   const { get } = useSettings();
 
-  const siteName = locale === "ar" ? get("site_name_ar", "ترينقل أكسسوار") : get("site_name_fr", "Tringle Accessoires");
+  const siteName = locale === "ar" ? get("site_name_ar", "ترينقلز أكسسوار") : get("site_name_fr", "Tringles Accessoires");
   const address = locale === "ar" ? get("address_ar") : get("address_fr");
 
   const phones = [get("contact_phone_1"), get("contact_phone_2"), get("contact_phone_3")].filter(Boolean);

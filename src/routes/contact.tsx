@@ -7,8 +7,8 @@ import { useSettings } from "@/hooks/useSettings";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Tringle Accessoires" },
-      { name: "description", content: "Contactez Tringle Accessoires par téléphone, WhatsApp ou email." },
+      { title: "Contact — Tringles Accessoires" },
+      { name: "description", content: "Contactez Tringles Accessoires par téléphone, WhatsApp ou email." },
     ],
   }),
   component: ContactPage,

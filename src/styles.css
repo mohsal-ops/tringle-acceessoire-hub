@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Tringle Accessoires design system.
+ * Tringles Accessoires design system.
  * Warm terracotta + gold palette. RTL-first.
  * Fonts (Noto Sans Arabic + Inter) loaded via <link> in __root.tsx.
  */
@@ -55,7 +55,7 @@
 :root {
   --radius: 0.75rem;
 
-  /* Brand palette — Tringle Accessoires: golden yellow on warm cream */
+  /* Brand palette — Tringles Accessoires: golden yellow on warm cream */
   --background: oklch(0.98 0.012 90);              /* warm cream */
   --foreground: oklch(0.20 0.01 80);                /* near black */
 
